@@ -1,0 +1,102 @@
+import React, { Component,Fragment } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    SafeAreaView,
+    Alert
+} from "react-native";
+
+import { Container, Content, Icon, Button } from 'native-base'
+import CustomHeader from './Components/CustomHeader'
+import ImageSlider from 'react-native-image-slider';
+class SettingsScreen extends Component {
+
+static navigationOptions = ({ navigation }) => ({
+        title: "Settings",
+        headerLeft: <Icon name="ios-menu" style={{ paddingLeft: 10 }} onPress={() => navigation.navigate('DrawerOpen')} />,
+        drawerIcon:
+            <Image
+                source={require('./assets/DrawerIcons/settings.png')}
+                style={[styles.icon]}
+            />
+
+    })
+
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+          isLoading: true
+        }
+        this.id = this.props.navigation.state.params.id;
+        Alert.alert(this.id);
+      }
+
+      GetItem (other_images) {
+  
+      Alert.alert("Manish");
+       
+        }
+
+        componentDidMount() {
+            return fetch('http://52.15.90.227/react/Api.php?action=details&id='+this.id)
+              .then((response) => response.json())
+              .then((responseJson) => {
+                let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+                this.setState({
+                  isLoading: false,
+                  dataSource: ds.cloneWithRows(responseJson),
+                }, function() {
+                  // In this block you can do something with new state.
+                });
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+
+render() {
+    Alert.alert(this.state.dataSource);
+var other_images = this.props.navigation.state.params.id;
+ other_images = other_images.split(',');
+ var arr2 = Object.keys(other_images).map(function (i) {
+  return other_images[i];
+});
+return (
+  
+  <React.Fragment>
+  <CustomHeader
+                    title="Details"
+                    drawerOpen={() => this.props.navigation.navigate("DrawerOpen")}
+                /> 
+  <ImageSlider 
+  loopBothSides
+  autoPlayWithInterval={3000}
+  images={arr2}/>
+
+   <Container>
+                 <Content contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 1 }}>
+  
+                    <Button
+                        full
+                        onPress={() => this.props.navigation.navigate('Home')}>
+                        <Text style={{ color: 'white' }}>Go to Home screen.</Text>
+                    </Button>
+                </Content>
+            </Container>
+  </React.Fragment>
+  )//return
+}
+
+}
+
+export default SettingsScreen
+
+const styles = StyleSheet.create({
+    icon: {
+        height: 24,
+        width: 24
+    }
+})
